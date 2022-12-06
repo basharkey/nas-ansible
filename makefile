@@ -9,5 +9,7 @@ vault:
 	ansible-vault encrypt vault.yml
 install:
 	ansible-playbook main.yml -i hosts.yml -e @vault.yml --ask-vault-pass --tags install
+lxc:
+	ansible-playbook main.yml -i hosts.yml -e @vault.yml --ask-vault-pass --tags lxc
 test:
 	ansible-playbook main.yml -i hosts.yml -e @vault.yml --ask-vault-pass --tags test
