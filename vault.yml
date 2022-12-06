@@ -1,0 +1,12 @@
+---
+ansible_sudo_pass:
+
+b2_key_id:
+b2_app_key:
+
+rclone_crypt_passwd:
+rclone_crypt_salt:
+
+msmtp_email_passwd:
+
+nextcloud_mariadb_passwd:

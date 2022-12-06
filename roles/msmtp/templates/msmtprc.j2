@@ -1,0 +1,11 @@
+account        default
+port           {{ msmtp_smtp_port }} 
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        /var/log/msmtp.log
+
+host           {{ msmtp_smtp_server }}
+from           {{ msmtp_email }}
+auth           on
+user           {{ msmtp_email }}
+password       {{ msmtp_email_passwd }}

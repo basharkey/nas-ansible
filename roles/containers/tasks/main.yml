@@ -1,0 +1,70 @@
+---
+- name: Bring any existing containers down
+  command: docker-compose down
+  args:
+    chdir: "{{ containers_dir  }}"
+  ignore_errors: yes
+
+- name: Install certbot
+  apt:
+    name:
+      - certbot
+    state: present
+
+- name: Create container dir structure
+  file:
+    path: "{{ containers_dir }}/volumes/{{ item }}"
+    state: directory
+    mode: 0755
+    recurse: yes
+  loop:
+    - nginx/conf.d
+    - nginx/letsencrypt
+    - nextcloud
+    - mariadb
+    #- navidrome
+
+- name: Template docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ containers_dir }}/docker-compose.yml"
+    mode: 0755
+
+- name: Copy base nginx.conf
+  copy:
+    src: nginx.conf
+    dest: "{{ containers_dir }}/volumes/nginx/nginx.conf"
+    mode: 0755
+
+- name: Copy nginx letsencrypt.conf
+  copy:
+    src: letsencrypt.conf
+    dest: "{{ containers_dir }}/volumes/nginx/letsencrypt.conf"
+    mode: 0755
+
+- name: Obtain container certs
+  include_tasks: obtain-container-cert.yml
+  loop: "{{ exposed_containers }}"
+  loop_control:
+    loop_var: container
+
+- name: Bring containers up
+  command: docker-compose up -d
+  args:
+    chdir: "{{ containers_dir  }}"
+
+- name: Copy certbot renewal service and timer
+  copy:
+    src: "{{ item }}"
+    dest: "/etc/systemd/system/{{ item }}"
+    mode: 0644
+  loop:
+    - certbot-renew.service
+    - certbot-renew.timer
+
+- name: Restart and enable certbot-renew.timer
+  systemd:
+    daemon_reload: yes
+    name: certbot-renew.timer
+    state: restarted
+    enabled: yes

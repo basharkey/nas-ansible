@@ -1,0 +1,19 @@
+---
+- hosts: all
+  become: yes
+
+  vars:
+    docker_install_compose: true
+    docker_users:
+      - "{{ ansible_ssh_user }}"
+
+  roles:
+    - { role: "zfs", tags: "zfs" }
+    - { role: "smb", tags: "install" }
+    - { role: "msmtp", tags: "install" }
+    - { role: "smartd", tags: "install" }
+    - { role: "zfs-scrub", tags: "install" }
+    - { role: "geerlingguy.docker", tags: "install" }
+    - { role: "containers", tags: "install" }
+    - { role: "b2-backup", tags: "install" }
+    - { role: "nftables", tags: "install" }

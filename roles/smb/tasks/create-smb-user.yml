@@ -1,0 +1,25 @@
+---
+- name: "Create {{ user.name }} group(s)"
+  group:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ user.groups }}"
+
+- name: "Create {{ user.name }} account"
+  user:
+    name: "{{ user.name }}"
+    groups: "{{ item }}"
+    append: yes
+  loop: "{{ user.groups }}"
+
+- name: Template temp smbpasswd file
+  template:
+    src: smbpasswd.j2
+    dest: /tmp/smbpasswd
+    mode: 0500
+
+- name: "Create {{ user.name }} smb account and set password"
+  shell: 'IFS= read -r passwd < /tmp/smbpasswd; printf "%s\n%s\n" "$passwd" "$passwd" | smbpasswd -a -s {{ user.name }}; unset passwd'
+
+- name: Securely delete temp smbpasswd file
+  command: shred -u /tmp/smbpasswd

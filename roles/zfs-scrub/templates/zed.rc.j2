@@ -1,0 +1,15 @@
+ZED_EMAIL_ADDR="{{ msmtp_email }}"
+ZED_EMAIL_PROG="mail"
+
+# Notification verbosity.
+#   If set to 0, suppress notification if the pool is healthy.
+#   If set to 1, send notification regardless of pool health.
+ZED_NOTIFY_VERBOSE=1
+
+# Command-line options for ZED_EMAIL_PROG.
+# The string @ADDRESS@ will be replaced with the recipient email address(es).
+# The string @SUBJECT@ will be replaced with the notification subject;
+#   this should be protected with quotes to prevent word-splitting.
+# Email will only be sent if ZED_EMAIL_ADDR is defined.
+# If @SUBJECT@ was omited here, a "Subject: ..." header will be added to notification
+ZED_EMAIL_OPTS="-s '@SUBJECT@' -r @ADDRESS@ {{ alert_email }}"

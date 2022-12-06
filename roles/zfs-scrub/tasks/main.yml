@@ -1,0 +1,22 @@
+---
+- name: Install zfs-zed
+  apt:
+    name: zfs-zed
+    state: present
+
+- name: Template zed.rc config
+  template:
+    src: zed.rc.j2
+    dest: /etc/zfs/zed.d/zed.rc
+
+- name: Restart and enable zfs-zed service
+  systemd:
+    name: zfs-zed.service
+    state: restarted
+    enabled: yes
+
+- name: Start and enable monthly zfs scrub service
+  systemd:
+    name: "zfs-scrub-monthly@{{ zpool }}.timer"
+    state: started
+    enabled: yes

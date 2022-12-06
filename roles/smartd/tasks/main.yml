@@ -1,0 +1,17 @@
+---
+- name: Install smartmontools
+  apt:
+    name: smartmontools
+    state: present
+
+- name: Template smartd.conf
+  template:
+    src: smartd.conf.j2
+    dest: /etc/smartd.conf
+    mode: 0644
+
+- name: Restart and enable smartd service
+  systemd:
+    name: smartd.service
+    state: restarted
+    enabled: yes

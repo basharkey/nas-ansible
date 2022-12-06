@@ -1,0 +1,57 @@
+# Last Modified: Mon Dec  5 12:26:14 2022
+#include <tunables/global>
+
+# Author: Simon Deziel <simon@sdeziel.info>
+
+
+profile msmtp /usr/bin/msmtp flags=(attach_disconnected) {
+  #include <abstractions/base>
+  #include <abstractions/dbus-session-strict>
+  #include <abstractions/nameservice>
+  #include <abstractions/p11-kit>
+  #include <abstractions/ssl_certs>
+  #include <abstractions/ssl_keys>
+  #include <local/usr.bin.msmtp>
+
+  dbus send bus=session interface=org.freedesktop.Secret.Service,
+
+  /dev/tty rw,
+  /etc/aliases r,
+  /etc/mailname r,
+  /etc/msmtprc r,
+  /etc/netrc r,
+  /tmp/ rw,
+  /usr/bin/msmtp mr,
+  /var/log/msmtp wk,
+  /{,usr/}bin/bash Cx -> helpers,
+  /{,usr/}bin/dash Cx -> helpers,
+  @{PROC}/@{pid}/loginuid r,
+  owner /dev/pts/[0-9]* rw,
+  owner /tmp/* rw,
+  owner /var/log/msmtp.log wk,
+  owner @{HOME}/**/*msmtprc r,
+  owner @{HOME}/.cache/msmtp/* r,
+  owner @{HOME}/.cache/msmtp/*.log wk,
+  owner @{HOME}/.config/msmtp/* r,
+  owner @{HOME}/.msmtp* r,
+  owner @{HOME}/.msmtp*.log wk,
+  owner @{HOME}/.netrc r,
+  owner @{HOME}/.tls-crls r,
+
+
+  profile helpers {
+    #include <abstractions/base>
+
+    /tmp/ rw,
+    /usr/bin/gpg{,2} PUx,
+    /usr/bin/head PUx,
+    /usr/bin/keyring PUx,
+    /usr/bin/pass PUx,
+    /usr/bin/secret-tool PUx,
+    /{,usr/}bin/bash mr,
+    /{,usr/}bin/cat PUx,
+    /{,usr/}bin/dash mr,
+    owner /tmp/* rw,
+
+  }
+}

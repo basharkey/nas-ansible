@@ -1,0 +1,47 @@
+---
+- name: "Check if {{ container }} fullchain.pem exists"
+  stat:
+    path: "/etc/letsencrypt/live/{{ container }}.{{ domain }}/fullchain.pem"
+  register: cert 
+
+- name: "Check if {{ container }} privkey.pem exists"
+  stat:
+    path: "/etc/letsencrypt/live/{{ container }}.{{ domain }}/privkey.pem"
+  register: key
+
+- name: "Check if {{ container }} chain.pem exists"
+  stat:
+    path: "/etc/letsencrypt/live/{{ container }}.{{ domain }}/chain.pem"
+  register: chain
+
+- name: "Obtain letsencrypt cert for {{ container }} if it does not exist"
+  when: not cert.stat.exists or not key.stat.exists or not chain.stat.exists
+  block:
+    - name: "Template {{ container }} temp nginx config"
+      template:
+        src: container-temp.conf.j2
+        dest: "/tmp/nginx-{{ container }}-temp.conf"
+        mode: 0755
+
+    # have to use temporary nginx container here
+    # bringing the main nginx container online without the creation of the letsencrypt certs causes it to create dirs with the name of the certs
+    - name: Run nginx with temp config
+      command: "docker run --rm -d --name nginx-{{ container }}-temp -p 80:80/tcp -v {{ containers_dir }}/volumes/nginx/letsencrypt:/var/www/letsencrypt -v {{ containers_dir }}/volumes/nginx/nginx.conf:/etc/nginx/nginx.conf -v /tmp/nginx-{{ container }}-temp.conf:/etc/nginx/conf.d/nginx-{{ container }}-temp.conf nginx"
+
+    - name: "Obtain {{ container }} letsencrypt cert"
+      #command: "certbot certonly --webroot -w {{ containers_dir }}/volumes/nginx/letsencrypt -d {{ container }}.{{ domain }} -m {{ letsencrypt_email }} --no-eff-email --agree-tos --dry-run"
+      command: "certbot certonly --webroot -w {{ containers_dir }}/volumes/nginx/letsencrypt -d {{ container }}.{{ domain }} -m {{ letsencrypt_email }} --no-eff-email --agree-tos"
+    
+    - name: Stop and remove nginx container with temp config
+      command: "docker stop nginx-{{ container }}-temp"
+
+    - name: "Remove {{ container }} temp nginx config"
+      file:
+        path: "/tmp/nginx-{{ container }}-temp.conf"
+        state: absent
+
+- name: "Template {{ container }} nginx config"
+  template:
+    src: "{{ container }}.conf.j2"
+    dest: "{{ containers_dir }}/volumes/nginx/conf.d/{{ container }}.conf"
+    mode: 0755

@@ -1,0 +1,28 @@
+---
+- name: "Template {{ job.name }}.service"
+  template:
+    src: b2-backup-job.service
+    dest: "/etc/systemd/system/{{ job.name }}.service"
+    mode: 0644
+
+- name: "Template {{ job.name }}.timer"
+  template:
+    src: b2-backup-job.timer
+    dest: "/etc/systemd/system/{{ job.name }}.timer"
+    mode: 0644
+
+- name: "Start and enable {{ job.name }}.timer"
+  systemd:
+    daemon_reload: yes
+    name: "{{ job.name }}.timer"
+    state: started
+    enabled: yes
+  when: job.enabled
+
+- name: "Stop and disable {{ job.name }}.timer"
+  systemd:
+    daemon_reload: yes
+    name: "{{ job.name }}.timer"
+    state: stopped
+    enabled: no
+  when: not job.enabled

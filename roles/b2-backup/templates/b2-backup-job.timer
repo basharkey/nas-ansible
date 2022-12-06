@@ -1,0 +1,10 @@
+[Unit]
+Description={{ job.name }} timer
+
+[Timer]
+Unit={{ job.name }}.service
+OnCalendar={{ job.on_calendar }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target

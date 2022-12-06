@@ -1,0 +1,24 @@
+[Unit]
+Description={{ job.name }} job
+After=network-online.target
+Wants=network-online.target
+Wants={{ job.name }}.timer
+
+[Service]
+Type=simple
+{% if job.args is defined %}
+{% if job.crypt is defined and job.crypt %}
+ExecStart=/bin/rclone {{ job.mode }} --config {{ zfs_mountpoint  }}/rclone.conf {{ job.args }} {{ job.src_path }} b2-crypt:{{ job.dest_bucket }}
+{% else %}
+ExecStart=/bin/rclone {{ job.mode }} --config {{ zfs_mountpoint  }}/rclone.conf {{ job.args }} {{ job.src_path }} b2:{{ job.dest_bucket }}
+{% endif %}
+{% else %}
+{% if job.crypt is defined and job.crypt %}
+ExecStart=/bin/rclone {{ job.mode }} --config {{ zfs_mountpoint  }}/rclone.conf {{ job.src_path }} b2-crypt:{{ job.dest_bucket }}
+{% else %}
+ExecStart=/bin/rclone {{ job.mode }} --config {{ zfs_mountpoint  }}/rclone.conf {{ job.src_path }} b2:{{ job.dest_bucket }}
+{% endif %}
+{% endif %}
+
+[Install]
+WantedBy=multi-user.target

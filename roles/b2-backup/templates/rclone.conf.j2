@@ -1,0 +1,12 @@
+[b2]
+type = b2
+account = {{ b2_key_id }}
+key = {{ b2_app_key }}
+
+[b2-crypt]
+type = crypt
+remote = b2:
+filename_encryption = off
+directory_name_encryption = false
+password = {{ rclone_crypt_obscure_passwd.stdout }}
+password2 = {{ rclone_crypt_obscure_salt.stdout }}

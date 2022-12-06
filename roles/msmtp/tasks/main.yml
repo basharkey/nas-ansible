@@ -1,0 +1,27 @@
+---
+- name: Install msmtp and dependencies
+  apt:
+    name:
+      - mailutils
+      - msmtp
+    state: present
+
+- name: Template msmtprc config
+  template:
+    src: msmtprc.j2
+    dest: /etc/msmtprc
+    mode: 0644
+
+- name: Copy msmtp apparmor profile
+  copy:
+    src: usr.bin.msmtp
+    dest: /etc/apparmor.d/usr.bin.msmtp
+    mode: 0644
+
+- name: Reload msmtp apparmor profile
+  command: apparmor_parser -r /etc/apparmor.d/usr.bin.msmtp
+
+- name: Copy mail.rc
+  copy:
+    src: mail.rc
+    dest: /etc/mail.rc

@@ -1,0 +1,25 @@
+---
+- name: Install rclone
+  apt:
+    name: rclone
+    state: present
+
+- name: Generate obscure password for rclone config 
+  command: "rclone obscure {{ rclone_crypt_passwd  }}"
+  register: rclone_crypt_obscure_passwd
+
+- name: Generate obscure salt for rclone config
+  command: "rclone obscure {{ rclone_crypt_salt  }}"
+  register: rclone_crypt_obscure_salt
+
+- name: Template rclone config
+  template:
+    src: rclone.conf.j2
+    dest: "{{ zfs_mountpoint }}/rclone.conf"
+    mode: 0600
+
+- name: Create b2 backup service and timers
+  include_tasks: create-backup-job.yml
+  loop: "{{ b2_backup_jobs }}"
+  loop_control:
+    loop_var: job

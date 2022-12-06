@@ -1,0 +1,59 @@
+---
+- name: Template debian backports repository
+  template:
+    src: backports.list.j2
+    dest: "/etc/apt/sources.list.d/{{ ansible_distribution_release  }}-backports.list"
+    mode: 0644
+
+- name: Template zfs apt preferences
+  template:
+    src: 90_zfs.j2
+    dest: /etc/apt/preferences.d/90_zfs
+    mode: 0644
+
+- name: Install zfs dependencies
+  apt:
+    update_cache: yes
+    name:
+      - dpkg-dev
+      - linux-headers-generic
+      - linux-image-generic
+    state: present
+
+- name: Install zfs
+  apt:
+    name:
+      - zfs-dkms
+      - zfsutils-linux
+    state: present
+
+- name: Load zfs kernel module on boot
+  lineinfile:
+    path: /etc/modules-load.d/zfs.conf
+    line: zfs
+    create: yes
+    mode: 0644
+
+- name: Load zfs kernel module
+  modprobe:
+    name: zfs
+    state: present
+
+- name: Check if zfs-auto-snapshot is installed
+  stat:
+    path: /usr/local/sbin/zfs-auto-snapshot
+  register: zfs_auto_snapshot
+
+- name: Install zfs-auto-snapshot
+  when: not zfs_auto_snapshot.stat.exists
+  block:
+    - name: Download and extract zfs-auto-snapshot
+      unarchive:
+        src: https://github.com/zfsonlinux/zfs-auto-snapshot/archive/upstream/1.2.4.tar.gz
+        dest: /tmp
+        remote_src: yes
+    
+    - name: Make install zfs-auto-snapshot
+      command: make install
+      args:
+        chdir: /tmp/zfs-auto-snapshot-upstream-1.2.4

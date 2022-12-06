@@ -1,0 +1,15 @@
+[global]
+	workgroup = SAMBA
+	security = user
+
+	passdb backend = tdbsam
+
+	client min protocol = SMB3
+	client max protocol = SMB3
+{% for share in smb_shares %}
+[{{ share.name }}]
+	path = {{ share.dir }}
+	valid shares = {{ share.users | join(", ") }}
+	browseable = No
+	read only = No
+{% endfor %}
