@@ -9,15 +9,21 @@ DO NOT forward port 443 until container services have been fully configured. Oth
 
 ## Bare Metal
 1. `make deps` to install playbook dependencies
-2. `make encrypt_string` to encrypt Samba passwords for [hosts.yml](https://github.com/basharkey/nas-ansible/blob/main/hosts.yml)
-3. Update variables in [hosts.yml](https://github.com/basharkey/nas-ansible/blob/main/hosts.yml)
-4. Update variables in [vault.yml](https://github.com/basharkey/nas-ansible/blob/main/vault.yml)
-5. `make vault` to encrypt [vault.yml](https://github.com/basharkey/nas-ansible/blob/main/vault.yml)
+2. `make encrypt_string` to encrypt Samba passwords for [hosts.yml](hosts.yml)
+3. Update variables in [hosts.yml](hosts.yml)
+4. Update variables in [vault.yml](vault.yml)
+5. `make vault` to encrypt [vault.yml](vault.yml)
 6. `make zfs` to install ZFS
-7. Create/import ZFS pool ensure `zpool`, `zfs_dataset`, and `zfs_mountpoint` values in [hosts.yml](hosts.yml) are correct
-8. `make install` to run playbook
+7. Create/import ZFS pool, ensure `zpool`, `zfs_dataset`, and `zfs_mountpoint` values in [hosts.yml](hosts.yml) are correct
+8. `make install` to run playbook for bare metal
 
 ## LXC
+1. `make encrypt_string` to encrypt Samba passwords for [hosts.yml](hosts.yml)
+3. Update variables in [hosts.yml](hosts.yml)
+4. Update variables in [vault.yml](vault.yml)
+5. `make vault` to encrypt [vault.yml](vault.yml)
+7. Create/import ZFS pool, ensure `zfs_mountpoint` in [hosts.yml](hosts.yml) reflects where you have mounted the ZFS pool/dataset on the LXC
+8. `make lxc` to run playbook for LXC
 
 # ZFS
 ## Create Pool 
