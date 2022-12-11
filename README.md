@@ -22,7 +22,7 @@ DO NOT forward port 443 until container services have been fully configured. Oth
 3. Update variables in [hosts.yml](hosts.yml)
 4. Update variables in [vault.yml](vault.yml)
 5. `make vault` to encrypt [vault.yml](vault.yml)
-7. Create/import ZFS pool, ensure `zfs_mountpoint` in [hosts.yml](hosts.yml) reflects where you have mounted the ZFS pool/dataset on the LXC
+7. Mount ZFS dataset within container, ensure `zfs_mountpoint` value in [hosts.yml](hosts.yml) contains the mountpoint
 8. `make lxc` to run playbook for LXC
 
 # ZFS
