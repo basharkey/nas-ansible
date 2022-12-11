@@ -9,11 +9,11 @@
 
   roles:
     - { role: "zfs", tags: "zfs" }
-    - { role: "smb", tags: "install" }
+    - { role: "smb", tags: ["install", "lxc"] }
     - { role: "msmtp", tags: "install" }
     - { role: "smartd", tags: "install" }
     - { role: "zfs-scrub", tags: "install" }
-    - { role: "geerlingguy.docker", tags: "install" }
-    - { role: "containers", tags: "install" }
-    - { role: "b2-backup", tags: "install" }
-    - { role: "nftables", tags: "install" }
+    - { role: "geerlingguy.docker", tags: ["install", "lxc"] }
+    - { role: "containers", tags: ["install", "lxc"] }
+    - { role: "b2-backup", tags: ["install", "lxc"] }
+    - { role: "nftables", tags: ["install", "lxc"] }
