@@ -34,13 +34,13 @@
   copy:
     src: nginx.conf
     dest: "{{ containers_dir }}/volumes/nginx/nginx.conf"
-    mode: 0755
+    mode: 0644
 
 - name: Copy nginx letsencrypt.conf
   copy:
     src: letsencrypt.conf
     dest: "{{ containers_dir }}/volumes/nginx/letsencrypt.conf"
-    mode: 0755
+    mode: 0644
 
 - name: Obtain container certs
   include_tasks: obtain-container-cert.yml
