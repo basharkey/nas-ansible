@@ -9,7 +9,7 @@
 {% for share in smb_shares %}
 [{{ share.name }}]
 	path = {{ share.dir }}
-	valid shares = {{ share.users | join(", ") }}
+	valid users = {{ share.users | join(", ") }}
 	browseable = No
 	read only = No
 {% endfor %}
