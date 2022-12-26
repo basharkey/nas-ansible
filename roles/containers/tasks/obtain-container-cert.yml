@@ -44,4 +44,4 @@
   template:
     src: "{{ container }}.conf.j2"
     dest: "{{ containers_dir }}/volumes/nginx/conf.d/{{ container }}.conf"
-    mode: 0755
+    mode: 0644
