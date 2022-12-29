@@ -4,6 +4,6 @@
 # Short Self-Test every Sunday at 4 AM
 # Long Self-Test every 15th day of the month at 5 AM
 DEFAULT -a -o on -S on -m {{ alert_email }} -M diminishing -s (S/../../7/04|L/../15/./05)
-{% for disk in smartd_mon_disks %}
+{% for disk in smartd_monitored_disks %}
 {{ disk }}
 {% endfor %}
