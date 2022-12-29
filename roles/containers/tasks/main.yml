@@ -27,7 +27,7 @@
   template:
     src: docker-compose.yml.j2
     dest: "{{ containers_dir }}/docker-compose.yml"
-    mode: 0755
+    mode: 0644
 
 - name: Copy base nginx.conf
   copy:
