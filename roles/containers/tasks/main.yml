@@ -7,8 +7,7 @@
 
 - name: Install certbot
   apt:
-    name:
-      - certbot
+    name: certbot
     state: present
 
 - name: Create container dir structure
